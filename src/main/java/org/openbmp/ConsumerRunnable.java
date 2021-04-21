@@ -18,6 +18,7 @@ import org.apache.kafka.common.config.ConfigException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbmp.api.parsed.message.*;
+import org.openbmp.api.parsed.processor.L3VpnPrefix;
 import org.openbmp.api.parsed.processor.Router;
 import org.openbmp.api.parsed.processor.Peer;
 import org.openbmp.api.parsed.processor.UnicastPrefix;
@@ -450,7 +451,7 @@ public class ConsumerRunnable implements Runnable {
                         logger.trace("Parsing peer message");
                         peer_msg_count++;
 
-                        Peer peer = new org.openbmp.api.parsed.processor.Peer(message.getContent());
+                        Peer peer = new Peer(message.getContent());
                         PeerQuery peerQuery = new PeerQuery(peer.records);
                         dbQuery = peerQuery;
 
@@ -487,7 +488,7 @@ public class ConsumerRunnable implements Runnable {
 
                         thread_type = ThreadType.THREAD_ATTRIBUTES;
 
-                        BaseAttribute ba = new org.openbmp.api.parsed.processor.BaseAttribute(message.getContent());
+                        BaseAttribute ba = new BaseAttribute(message.getContent());
                         dbQuery = new BaseAttributeQuery(ba.records);
 
                         if (!cfg.getDisable_as_path_indexing()) {
@@ -505,13 +506,21 @@ public class ConsumerRunnable implements Runnable {
                         UnicastPrefix up = new UnicastPrefix(message.getContent());
                         dbQuery = new UnicastPrefixQuery(up.records);
 
+//                      OLD_TYPE
+//                    } else if ((message.getType() != null && message.getType().equalsIgnoreCase("l3vpn"))
+//                            || record.topic().equals("openbmp.parsed.l3vpn")) {
+//                        logger.trace("Parsing L3VPN prefix message");
+//                        l3vpn_prefix_msg_count++;
+//
+//                        obj = new L3VpnPrefix(message.getVersion(), message.getContent());
+//                        dbQuery = new L3VpnPrefixQuery(obj.getRowMap());
                     } else if ((message.getType() != null && message.getType().equalsIgnoreCase("l3vpn"))
                             || record.topic().equals("openbmp.parsed.l3vpn")) {
                         logger.trace("Parsing L3VPN prefix message");
                         l3vpn_prefix_msg_count++;
 
-                        obj = new L3VpnPrefix(message.getVersion(), message.getContent());
-                        dbQuery = new L3VpnPrefixQuery(obj.getRowMap());
+                        L3VpnPrefix up = new L3VpnPrefix(message.getContent());
+                        dbQuery = new L3VpnPrefixQuery(up.records);
 
                     } else if ((message.getType() != null && message.getType().equalsIgnoreCase("bmp_stat"))
                             || record.topic().equals("openbmp.parsed.bmp_stat")) {

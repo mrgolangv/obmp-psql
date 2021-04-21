@@ -590,6 +590,181 @@ CREATE INDEX ON ip_rib_log (origin_as);
 -- convert to timescaledb
 SELECT create_hypertable('ip_rib_log', 'timestamp', chunk_time_interval => interval '1 hours');
 
+DROP TABLE IF EXISTS l3vpn_rib;
+CREATE TABLE l3vpn_rib
+(
+    hash_id uuid not null,
+    peer_hash_id uuid not null,
+    path_attr_hash_id uuid,
+    isipv4 boolean default false not null,
+    origin_as bigint,
+    prefix inet not null,
+    prefix_len smallint not null,
+    prefix_bin varchar(128),
+    prefix_bcast_bin varchar(128),
+    prefix_bits varchar(128),
+    timestamp timestamp(6) default timezone('utc'::text, now()) not null,
+    iswithdrawn boolean default false not null,
+    path_id bigint,
+    labels varchar(255),
+    isprepolicy boolean default true not null,
+    isadjribin boolean default true not null,
+    rd varchar(128) not null,
+    constraint l3vpn_rib_pkey
+        primary key (peer_hash_id, hash_id)
+)
+    partition by HASH (peer_hash_id);
+
+CREATE INDEX ON l3vpn_rib USING HASH (hash_id);
+--CREATE INDEX ON l3vpn_rib USING HASH (peer_hash_id);
+-- Brin apparently requires a lot of memory and changes psql to prefer this index
+-- CREATE INDEX ON l3vpn_rib using brin (peer_hash_id,timestamp);
+CREATE INDEX ON l3vpn_rib USING HASH (path_attr_hash_id);
+CREATE INDEX ON l3vpn_rib USING GIST (prefix inet_ops);
+CREATE INDEX ON l3vpn_rib (origin_as);
+CREATE INDEX ON l3vpn_rib (peer_hash_id,origin_as);
+
+CREATE TABLE l3vpn_rib_p1 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 0)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p2 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 1)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p3 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 2)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p4 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 3)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p5 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 4)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p6 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 5)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p7 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 6)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p8 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 7)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p9 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 8)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p10 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 9)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p11 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 10)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p12 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 11)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p13 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 12)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p14 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 13)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p15 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 14)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p16 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 15)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p17 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 16)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p18 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 17)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p19 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 18)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p20 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 19)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p21 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 20)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p22 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 21)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p23 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 22)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p24 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 23)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p25 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 24)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p26 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 25)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p27 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 26)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p28 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 27)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p29 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 28)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p30 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 29)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p31 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 30)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p32 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 31)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p33 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 32)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p34 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 33)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p35 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 34)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p36 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 35)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p37 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 36)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p38 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 37)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p39 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 38)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+CREATE TABLE l3vpn_rib_p40 PARTITION OF l3vpn_rib
+    FOR VALUES WITH (modulus 40, remainder 39)
+               WITH (autovacuum_vacuum_cost_limit = 1000, autovacuum_vacuum_cost_delay = 5);
+
+
+-- Table structure for table l3vpn_rib_log
+DROP TABLE IF EXISTS l3vpn_rib_log;
+CREATE TABLE l3vpn_rib_log (
+                               id                      bigserial           NOT NULL,
+                               path_attr_hash_id       uuid                NOT NULL,
+                               timestamp               timestamp(6)        without time zone default (now() at time zone 'utc') NOT NULL,
+                               peer_hash_id            uuid                NOT NULL,
+                               prefix                  inet                NOT NULL,
+                               prefix_len              smallint            NOT NULL,
+                               origin_as               bigint              NOT NULL,
+                               isWithdrawn             boolean             NOT NULL
+) WITH (autovacuum_enabled = false) TABLESPACE timeseries;
+--CREATE INDEX ON l3vpn_rib_log USING HASH  (peer_hash_id);
+CREATE INDEX ON l3vpn_rib_log USING GIST (prefix inet_ops);
+CREATE INDEX ON l3vpn_rib_log (origin_as);
+
+-- convert to timescaledb
+SELECT create_hypertable('l3vpn_rib_log', 'timestamp', chunk_time_interval => interval '1 hours');
+
 -- Table structure for global ip rib
 DROP TABLE IF EXISTS global_ip_rib;
 CREATE TABLE global_ip_rib (
