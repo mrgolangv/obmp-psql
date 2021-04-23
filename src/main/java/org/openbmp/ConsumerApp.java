@@ -147,6 +147,8 @@ public class ConsumerApp
                                 psqlApp.consumerThreads.get(i).getUnicast_prefix_msg_count());
                         logger.info("        l3vpn prefix messages: %d",
                                 psqlApp.consumerThreads.get(i).getL3vpn_prefix_msg_count());
+                        logger.info("        Evpn prefix messages: %d",
+                                psqlApp.consumerThreads.get(i).getEvpn_prefix_msg_count());
                         logger.info("             LS node messages: %d",
                                 psqlApp.consumerThreads.get(i).getLs_node_msg_count());
                         logger.info("             LS link messages: %d",

@@ -127,7 +127,7 @@ public class L3VpnPrefixQuery extends Query {
             sb.append('\''); sb.append(pojo.getRd()); sb.append("'"); // rd
             sb.append(')');
         }
-        System.out.println(sb.toString());
+
         return sb.toString();
     }
 

@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbmp.api.parsed.message.*;
 import org.openbmp.api.parsed.processor.L3VpnPrefix;
+import org.openbmp.api.parsed.processor.EvpnPrefix;
 import org.openbmp.api.parsed.processor.Router;
 import org.openbmp.api.parsed.processor.Peer;
 import org.openbmp.api.parsed.processor.UnicastPrefix;
@@ -84,6 +85,7 @@ public class ConsumerRunnable implements Runnable {
     private long base_attribute_msg_count;
     private long unicast_prefix_msg_count;
     private long l3vpn_prefix_msg_count;
+    private long evpn_prefix_msg_count;
     private long ls_node_msg_count;
     private long ls_link_msg_count;
     private long ls_prefix_msg_count;
@@ -521,7 +523,13 @@ public class ConsumerRunnable implements Runnable {
 
                         L3VpnPrefix up = new L3VpnPrefix(message.getContent());
                         dbQuery = new L3VpnPrefixQuery(up.records);
+                    } else if ((message.getType() != null && message.getType().equalsIgnoreCase("evpn"))
+                            || record.topic().equals("openbmp.parsed.evpn")) {
+                        logger.trace("Parsing EVPN prefix message");
+                        evpn_prefix_msg_count++;
 
+                        EvpnPrefix up = new EvpnPrefix(message.getContent());
+                        dbQuery = new EvpnPrefixQuery(up.records);
                     } else if ((message.getType() != null && message.getType().equalsIgnoreCase("bmp_stat"))
                             || record.topic().equals("openbmp.parsed.bmp_stat")) {
                         logger.trace("Parsing bmp_stat message");
@@ -1111,6 +1119,8 @@ public class ConsumerRunnable implements Runnable {
     public long getL3vpn_prefix_msg_count() {
         return l3vpn_prefix_msg_count;
     }
+
+    public long getEvpn_prefix_msg_count() { return evpn_prefix_msg_count; }
 
     public long getUnicast_prefix_msg_count() {
         return unicast_prefix_msg_count;
